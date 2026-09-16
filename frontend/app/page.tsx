@@ -14,18 +14,21 @@ export default function HomePage() {
         <ChatbotUISVG theme={theme === "dark" ? "dark" : "light"} scale={0.3} />
       </div>
 
-      <div className="mt-2 text-4xl font-bold">智能对话</div>
+      <div className="mt-3 text-2xl font-semibold tracking-normal">
+        智能对话
+      </div>
 
       <Link
-        className="mt-4 flex w-[200px] items-center justify-center rounded-md bg-blue-500 p-2 font-semibold"
+        className="veyra-btn-primary mt-6 flex w-[200px] items-center justify-center gap-1 px-4 py-2"
         href="/local"
       >
         进入本地模式
-        <IconArrowRight className="ml-1" size={20} />
+        <IconArrowRight size={18} stroke={1.75} />
       </Link>
 
-      <p className="text-muted-foreground mt-4 max-w-md px-6 text-center text-sm leading-relaxed">
-        不需要登录，会话存在这台浏览器里；检索、工具调用与多智能体由本机的 Python 后端执行。
+      <p className="text-muted-foreground/75 mt-4 max-w-md px-6 text-center text-sm leading-relaxed">
+        不需要登录，会话存在这台浏览器里；检索、工具调用与多智能体由本机的
+        Python 后端执行。
       </p>
     </div>
   )

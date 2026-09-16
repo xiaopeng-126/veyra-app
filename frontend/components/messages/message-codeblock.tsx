@@ -1,9 +1,13 @@
 import { Button } from "@/components/ui/button"
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard"
 import { IconCheck, IconCopy, IconDownload } from "@tabler/icons-react"
+import { useTheme } from "next-themes"
 import { FC, memo } from "react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism"
+import {
+  oneDark,
+  oneLight
+} from "react-syntax-highlighter/dist/cjs/styles/prism"
 
 interface MessageCodeBlockProps {
   language: string
@@ -52,6 +56,9 @@ export const generateRandomString = (length: number, lowercase = false) => {
 export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
   ({ language, value }) => {
     const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 })
+    const { resolvedTheme } = useTheme()
+    // 消息是挂载后才从 localStorage 读出来渲染的，这里不存在服务端不一致
+    const isDark = resolvedTheme !== "light"
 
     const downloadAsFile = () => {
       if (typeof window === "undefined") {
@@ -86,14 +93,14 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
     }
 
     return (
-      <div className="codeblock relative w-full bg-zinc-950 font-sans">
-        <div className="flex w-full items-center justify-between bg-zinc-700 px-4 text-white">
+      <div className="codeblock relative w-full overflow-hidden rounded-lg border border-zinc-200/90 bg-zinc-50 font-sans shadow-[0_2px_8px_rgba(15,23,42,0.04)] dark:border-zinc-800 dark:bg-zinc-950">
+        <div className="flex w-full items-center justify-between border-b border-zinc-200 bg-zinc-100/80 px-4 text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
           <span className="text-xs lowercase">{language}</span>
           <div className="flex items-center space-x-1">
             <Button
               variant="ghost"
               size="icon"
-              className="hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
+              className="hover:bg-zinc-200 focus-visible:ring-1 focus-visible:ring-slate-400 focus-visible:ring-offset-0 dark:hover:bg-zinc-800 dark:focus-visible:ring-slate-700"
               onClick={downloadAsFile}
             >
               <IconDownload size={16} />
@@ -102,7 +109,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
             <Button
               variant="ghost"
               size="icon"
-              className="text-xs hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
+              className="text-xs hover:bg-zinc-200 focus-visible:ring-1 focus-visible:ring-slate-400 focus-visible:ring-offset-0 dark:hover:bg-zinc-800 dark:focus-visible:ring-slate-700"
               onClick={onCopy}
             >
               {isCopied ? <IconCheck size={16} /> : <IconCopy size={16} />}
@@ -111,7 +118,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
         </div>
         <SyntaxHighlighter
           language={language}
-          style={oneDark}
+          style={isDark ? oneDark : oneLight}
           // showLineNumbers
           customStyle={{
             margin: 0,

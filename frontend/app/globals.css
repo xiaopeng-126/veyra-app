@@ -7,16 +7,16 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 10px;
+  background-color: hsl(var(--border));
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #aaa;
+  background-color: hsl(var(--muted-foreground) / 0.55);
 }
 
 ::-webkit-scrollbar-track:hover {
-  background-color: #f2f2f2;
+  background-color: hsl(var(--muted) / 0.6);
 }
 
 ::-webkit-scrollbar-corner {
@@ -29,68 +29,114 @@
 }
 
 @layer base {
+  /* 浅色主题：冷调灰白画布 + 白色内容面，用色温和阴影拉开层级 */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 220 14% 97%;
+    --foreground: 222 18% 13%;
 
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --muted: 220 12% 94%;
+    --muted-foreground: 220 8% 44%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --popover-foreground: 222 18% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 222 18% 13%;
 
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
+    --border: 220 12% 88%;
+    --input: 220 10% 84%;
 
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 222 38% 12%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 220 14% 95%;
+    --secondary-foreground: 222 18% 14%;
 
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 218 24% 93%;
+    --accent-foreground: 222 18% 14%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --ring: 0 0% 63.9%;
+    --success: 145 62% 32%;
+    --success-foreground: 0 0% 100%;
+
+    /* 蓝色只负责选中和焦点，避免整页再次变成单色灰 */
+    --ring: 217 91% 56%;
+    --brand: 217 91% 56%;
 
     --radius: 0.5rem;
   }
 
+  /*
+   * 深色主题：Codex 的灰阶 —— 完全零彩度，靠亮度分层。
+   * 画布 #181818、卡片 #212121、浮层 #2a2a2a，
+   * 交互态全部用白色低透明度叠加，而不是另调一个实色。
+   */
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 9.4%;
+    --foreground: 0 0% 88%;
 
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted: 0 0% 17%;
+    --muted-foreground: 0 0% 62%;
 
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 16.5%;
+    --popover-foreground: 0 0% 88%;
 
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 13%;
+    --card-foreground: 0 0% 88%;
 
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
+    --border: 0 0% 20.5%;
+    --input: 0 0% 24%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.5%;
+    --secondary-foreground: 0 0% 88%;
 
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 0 0% 17%;
+    --accent-foreground: 0 0% 88%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
+    --destructive: 0 62% 58%;
+    --destructive-foreground: 0 0% 98%;
 
-    --ring: 0 0% 14.9%;
+    --success: 145 55% 50%;
+    --success-foreground: 0 0% 5%;
+
+    --ring: 205 100% 60%;
+    --brand: 205 100% 60%;
+  }
+}
+
+@layer components {
+  /*
+   * 输入类控件：表面比底色高一档 + 细描边，聚焦时描边提亮。
+   * 比「透明底 + 亮灰边框」少一点方框感。
+   */
+  .veyra-field {
+    @apply border-border/80 bg-card text-foreground placeholder:text-muted-foreground/70 rounded-md border text-sm transition-colors;
+    @apply focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20;
+  }
+
+  /* 主操作：深色填充 + 轻微投影，和普通表面拉开层级 */
+  .veyra-btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 rounded-md text-sm font-medium shadow-[0_1px_2px_rgba(15,23,42,0.12)] transition-all disabled:opacity-40;
+  }
+
+  /* 次操作：填充式按钮，不用描边堆方框 */
+  .veyra-btn-secondary {
+    @apply bg-secondary text-foreground hover:bg-muted rounded-md text-sm ring-1 ring-inset ring-border/50 transition-colors disabled:opacity-40;
+  }
+
+  /* 工具型按钮：静置无底色，悬停才浮出来 */
+  .veyra-btn-ghost {
+    @apply text-muted-foreground hover:bg-accent hover:text-foreground rounded-md transition-colors disabled:opacity-40;
+  }
+
+  /* 表单卡片：比输入框再高一档，里面的输入框才会读成「凹进去的一层」 */
+  .veyra-surface {
+    @apply border-border/70 bg-popover rounded-lg border;
   }
 }
 
@@ -100,5 +146,76 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /*
+   * 自定义背景图：固定铺在最底层，上面盖一层用底色调出的遮罩。
+   * 面板、卡片那些不透明表面照旧渲染，因此正文对比度不受图片影响。
+   */
+  html[data-veyra-bg="image"] body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image: var(--veyra-bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  html[data-veyra-bg="image"] body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-color: hsl(var(--background) / var(--veyra-bg-veil, 0.72));
+  }
+
+  /* 背景图要能透上来，外层容器就不能再填不透明底色 */
+  html[data-veyra-bg="image"] body,
+  html[data-veyra-bg="image"] body > div {
+    background-color: transparent;
+  }
+
+  /* 设置弹窗必须保持不透明，否则背景图会穿透到文字和滑块下面。 */
+  html[data-veyra-bg="image"] .appearance-dialog {
+    background-color: hsl(var(--popover)) !important;
+  }
+
+  /*
+   * 默认只让背景图出现在对话区：侧栏、顶栏、输入区和卡片保持实体表面，
+   * 避免复杂图片穿到文字下面造成“发糊”的视觉感受。
+   */
+  html[data-veyra-bg="image"][data-veyra-coverage="stage"] .veyra-panel,
+  html[data-veyra-bg="image"][data-veyra-coverage="stage"] .veyra-card {
+    background-color: hsl(var(--card)) !important;
+  }
+
+  /*
+   * 导航、侧标、header、输入区这些面板：自己担底色。
+   * 否则容器透明后图片会直接穿到正文下面，根本读不清。
+   */
+  html[data-veyra-bg="image"] .veyra-panel {
+    /* 只做半透明着色，不对背景做 backdrop blur，保持文字和图片边缘清晰 */
+    background-color: hsl(
+      var(--background) / var(--veyra-panel-alpha, 0.72)
+    ) !important;
+  }
+
+  /* 消息气泡与卡片：比面板再实一点，保住层次 */
+  html[data-veyra-bg="image"] .veyra-card {
+    background-color: hsl(
+      var(--card) / var(--veyra-card-alpha, 0.82)
+    ) !important;
+  }
+
+  /*
+   * 对话区底衬：不加就是一大块裸图，消息气泡孤零零悬在中间，
+   * 跟四周的面板不成一体。这层比面板淡，只做过渡。
+   */
+  html[data-veyra-bg="image"] .veyra-stage {
+    background-color: hsl(var(--background) / var(--veyra-stage-alpha, 0.42));
   }
 }

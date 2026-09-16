@@ -3,7 +3,9 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 })
 
 const withPWA = require("next-pwa")({
-  dest: "public"
+  dest: "public",
+  // 开发环境不注册 Service Worker，避免旧缓存盖住最新界面。
+  disable: process.env.NODE_ENV === "development"
 })
 
 module.exports = withBundleAnalyzer(

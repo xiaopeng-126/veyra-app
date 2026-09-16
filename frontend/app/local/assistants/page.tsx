@@ -21,7 +21,13 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -54,10 +60,17 @@ const MODELS = [
  * 都存浏览器本地；会话里选中助手后，角色设定会作为系统提示词发给后端。
  */
 export default function AssistantsPage() {
-  const [state, setState] = useState<AssistantsState>({ assistants: [], prompts: [] })
+  const [state, setState] = useState<AssistantsState>({
+    assistants: [],
+    prompts: []
+  })
   const [hydrated, setHydrated] = useState(false)
-  const [editingAssistant, setEditingAssistant] = useState<Assistant | null>(null)
-  const [editingPrompt, setEditingPrompt] = useState<PromptTemplate | null>(null)
+  const [editingAssistant, setEditingAssistant] = useState<Assistant | null>(
+    null
+  )
+  const [editingPrompt, setEditingPrompt] = useState<PromptTemplate | null>(
+    null
+  )
   const [pendingDelete, setPendingDelete] = useState<{
     kind: "assistant" | "prompt"
     id: string
@@ -74,12 +87,12 @@ export default function AssistantsPage() {
   }, [state, hydrated])
 
   const upsertAssistant = useCallback((assistant: Assistant) => {
-    setState((current) => {
-      const exists = current.assistants.some((a) => a.id === assistant.id)
+    setState(current => {
+      const exists = current.assistants.some(a => a.id === assistant.id)
       return {
         ...current,
         assistants: exists
-          ? current.assistants.map((a) => (a.id === assistant.id ? assistant : a))
+          ? current.assistants.map(a => (a.id === assistant.id ? assistant : a))
           : [...current.assistants, assistant]
       }
     })
@@ -88,12 +101,12 @@ export default function AssistantsPage() {
   }, [])
 
   const upsertPrompt = useCallback((prompt: PromptTemplate) => {
-    setState((current) => {
-      const exists = current.prompts.some((p) => p.id === prompt.id)
+    setState(current => {
+      const exists = current.prompts.some(p => p.id === prompt.id)
       return {
         ...current,
         prompts: exists
-          ? current.prompts.map((p) => (p.id === prompt.id ? prompt : p))
+          ? current.prompts.map(p => (p.id === prompt.id ? prompt : p))
           : [...current.prompts, prompt]
       }
     })
@@ -104,23 +117,31 @@ export default function AssistantsPage() {
   const confirmDelete = useCallback(() => {
     if (!pendingDelete) return
     const target = pendingDelete
-    setState((current) =>
+    setState(current =>
       target.kind === "assistant"
-        ? { ...current, assistants: current.assistants.filter((a) => a.id !== target.id) }
-        : { ...current, prompts: current.prompts.filter((p) => p.id !== target.id) }
+        ? {
+            ...current,
+            assistants: current.assistants.filter(a => a.id !== target.id)
+          }
+        : {
+            ...current,
+            prompts: current.prompts.filter(p => p.id !== target.id)
+          }
     )
     toast.success(`已删除：${target.name}`)
     setPendingDelete(null)
   }, [pendingDelete])
 
-  const modelLabel = (id: string): string => MODELS.find((m) => m.id === id)?.label ?? id
+  const modelLabel = (id: string): string =>
+    MODELS.find(m => m.id === id)?.label ?? id
 
   return (
     <div className="flex min-w-0 flex-1 flex-col">
-      <header className="border-b px-6 py-3">
+      <header className="veyra-panel border-border/70 border-b px-6 py-3">
         <h1 className="text-base font-semibold">助手与提示词</h1>
-        <p className="text-muted-foreground text-xs">
-          助手 = 角色设定 + 默认模型，在会话顶部选中后生效；提示词模板会在会话底部提供快捷按钮。
+        <p className="text-muted-foreground/75 text-xs">
+          助手 = 角色设定 +
+          默认模型，在会话顶部选中后生效；提示词模板会在会话底部提供快捷按钮。
         </p>
       </header>
 
@@ -128,7 +149,9 @@ export default function AssistantsPage() {
         <div className="mx-auto flex max-w-4xl flex-col gap-8">
           <section className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold">助手（{state.assistants.length}）</h2>
+              <h2 className="text-sm font-semibold">
+                助手（{state.assistants.length}）
+              </h2>
               <Button
                 size="sm"
                 variant="outline"
@@ -140,8 +163,8 @@ export default function AssistantsPage() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              {state.assistants.map((assistant) => (
-                <Card key={assistant.id}>
+              {state.assistants.map(assistant => (
+                <Card key={assistant.id} className="veyra-card">
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
@@ -194,19 +217,27 @@ export default function AssistantsPage() {
 
           <section className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold">提示词模板（{state.prompts.length}）</h2>
-              <Button size="sm" variant="outline" onClick={() => setEditingPrompt(createPrompt())}>
+              <h2 className="text-sm font-semibold">
+                提示词模板（{state.prompts.length}）
+              </h2>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setEditingPrompt(createPrompt())}
+              >
                 <IconPlus size={14} className="mr-1" />
                 新增提示词
               </Button>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              {state.prompts.map((prompt) => (
-                <Card key={prompt.id}>
+              {state.prompts.map(prompt => (
+                <Card key={prompt.id} className="veyra-card">
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
-                      <CardTitle className="truncate text-sm">{prompt.name}</CardTitle>
+                      <CardTitle className="truncate text-sm">
+                        {prompt.name}
+                      </CardTitle>
                       <div className="flex shrink-0 gap-1">
                         <Button
                           size="icon"
@@ -249,7 +280,7 @@ export default function AssistantsPage() {
 
       <Dialog
         open={editingAssistant !== null}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           if (!open) setEditingAssistant(null)
         }}
       >
@@ -268,11 +299,14 @@ export default function AssistantsPage() {
                   <Label htmlFor="assistant-emoji">图标</Label>
                   <input
                     id="assistant-emoji"
-                    className="border-input bg-background rounded-md border px-3 py-2 text-center text-sm"
+                    className="veyra-field px-3 py-2 text-center"
                     value={editingAssistant.emoji}
                     maxLength={2}
-                    onChange={(e) =>
-                      setEditingAssistant({ ...editingAssistant, emoji: e.target.value })
+                    onChange={e =>
+                      setEditingAssistant({
+                        ...editingAssistant,
+                        emoji: e.target.value
+                      })
                     }
                   />
                 </div>
@@ -280,10 +314,13 @@ export default function AssistantsPage() {
                   <Label htmlFor="assistant-name">名称</Label>
                   <input
                     id="assistant-name"
-                    className="border-input bg-background rounded-md border px-3 py-2 text-sm"
+                    className="veyra-field px-3 py-2"
                     value={editingAssistant.name}
-                    onChange={(e) =>
-                      setEditingAssistant({ ...editingAssistant, name: e.target.value })
+                    onChange={e =>
+                      setEditingAssistant({
+                        ...editingAssistant,
+                        name: e.target.value
+                      })
                     }
                   />
                 </div>
@@ -293,7 +330,7 @@ export default function AssistantsPage() {
                 <Label>默认模型档位</Label>
                 <Select
                   value={editingAssistant.model}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     setEditingAssistant({ ...editingAssistant, model: value })
                   }
                 >
@@ -301,7 +338,7 @@ export default function AssistantsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {MODELS.map((m) => (
+                    {MODELS.map(m => (
                       <SelectItem key={m.id} value={m.id}>
                         {m.label}
                       </SelectItem>
@@ -314,11 +351,14 @@ export default function AssistantsPage() {
                 <Label htmlFor="assistant-prompt">角色设定</Label>
                 <textarea
                   id="assistant-prompt"
-                  className="border-input bg-background min-h-[140px] rounded-md border px-3 py-2 text-sm"
+                  className="veyra-field min-h-[140px] px-3 py-2"
                   placeholder="例如：你是严谨的技术评审，区分结论与推测"
                   value={editingAssistant.systemPrompt}
-                  onChange={(e) =>
-                    setEditingAssistant({ ...editingAssistant, systemPrompt: e.target.value })
+                  onChange={e =>
+                    setEditingAssistant({
+                      ...editingAssistant,
+                      systemPrompt: e.target.value
+                    })
                   }
                 />
               </div>
@@ -330,7 +370,9 @@ export default function AssistantsPage() {
               取消
             </Button>
             <Button
-              onClick={() => editingAssistant && upsertAssistant(editingAssistant)}
+              onClick={() =>
+                editingAssistant && upsertAssistant(editingAssistant)
+              }
               disabled={!editingAssistant?.name.trim()}
             >
               保存
@@ -341,7 +383,7 @@ export default function AssistantsPage() {
 
       <Dialog
         open={editingPrompt !== null}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           if (!open) setEditingPrompt(null)
         }}
       >
@@ -359,19 +401,26 @@ export default function AssistantsPage() {
                 <Label htmlFor="prompt-name">名称</Label>
                 <input
                   id="prompt-name"
-                  className="border-input bg-background rounded-md border px-3 py-2 text-sm"
+                  className="veyra-field px-3 py-2"
                   value={editingPrompt.name}
-                  onChange={(e) => setEditingPrompt({ ...editingPrompt, name: e.target.value })}
+                  onChange={e =>
+                    setEditingPrompt({ ...editingPrompt, name: e.target.value })
+                  }
                 />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="prompt-content">内容</Label>
                 <textarea
                   id="prompt-content"
-                  className="border-input bg-background min-h-[120px] rounded-md border px-3 py-2 text-sm"
+                  className="veyra-field min-h-[120px] px-3 py-2"
                   placeholder="例如：把上面的内容总结成不超过五条要点"
                   value={editingPrompt.content}
-                  onChange={(e) => setEditingPrompt({ ...editingPrompt, content: e.target.value })}
+                  onChange={e =>
+                    setEditingPrompt({
+                      ...editingPrompt,
+                      content: e.target.value
+                    })
+                  }
                 />
               </div>
             </div>
@@ -393,7 +442,7 @@ export default function AssistantsPage() {
 
       <AlertDialog
         open={pendingDelete !== null}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           if (!open) setPendingDelete(null)
         }}
       >
